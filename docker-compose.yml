@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - "C:/fants/app/static/uploads:/app/app/static/uploads"   # Bind mount
+    environment:
+      - DATABASE_URL=postgresql+psycopg://postgres:pidjakS1karmanom@db:5432/fanty_db
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: fanty_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pidjakS1karmanom
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+    driver: local

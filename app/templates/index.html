@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Все фанты</h2>
+
+{% if empty_message %}
+    <div class="alert alert-info">{{ empty_message }}</div>
+{% endif %}
+
+{% if fantasies %}
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for fantasy in fantasies %}
+        <div class="col">
+            <div class="card h-100">
+                <img src="/static/uploads/{{ fantasy.gif_filename }}" class="card-img-top" alt="GIF" style="max-height: 300px; object-fit: cover;">
+                <div class="card-body">
+                    <p class="card-text">{{ fantasy.description }}</p>
+                    <a href="/fantasy/{{ fantasy.id }}" class="btn btn-primary btn-sm w-100">Открыть</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    {% if not empty_message %}
+        <p class="text-muted">Список пуст. <a href="/create">Создай первый фант!</a></p>
+    {% endif %}
+{% endif %}
+{% endblock %}

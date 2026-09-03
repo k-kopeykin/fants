@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <div class="card shadow">
+            <img src="/static/uploads/{{ fantasy.gif_filename }}" class="card-img-top" alt="GIF">
+            <div class="card-body">
+                <h3 class="card-title">Задание:</h3>
+                <p class="card-text lead">{{ fantasy.description }}</p>
+                <a href="/" class="btn btn-secondary me-2">Назад к списку</a>
+                <a href="/random" class="btn btn-warning">Следующий случайный</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
