@@ -1,10 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Нет фантов{% endblock %}
+{% block title %}Фанты{% endblock %}
 
 {% block content %}
-<div class="alert alert-warning text-center">
-    <h2>🎲 {{ message }}</h2>
-    <p><a href="/create" class="btn btn-success btn-lg">Создать первый фант</a></p>
-</div>
+
+<section class="fant-card">
+  <div class="empty-state">
+    <div class="empty-icon">🎲</div>
+    <h2 class="empty-title">Пока пусто</h2>
+    <p class="empty-text">
+      Ни одного фанта ещё не создано.<br>
+      Давай добавим первый — и игра начнётся!
+    </p>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block actions %}
+<footer class="actions">
+  <a href="/create" class="btn btn-primary">Создать первый фант</a>
+  <a href="/" class="btn btn-secondary">На главную</a>
+</footer>
 {% endblock %}

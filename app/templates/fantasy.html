@@ -1,16 +1,36 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8 text-center">
-        <div class="card shadow">
-            <img src="/static/uploads/{{ fantasy.gif_filename }}" class="card-img-top" alt="GIF">
-            <div class="card-body">
-                <h3 class="card-title">Задание:</h3>
-                <p class="card-text lead">{{ fantasy.description }}</p>
-                <a href="/" class="btn btn-secondary me-2">Назад к списку</a>
-                <a href="/random" class="btn btn-warning">Следующий случайный</a>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Фант #{{ fantasy.id }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+<main class="screen">
+  <header class="header">
+    <a href="/" class="logo">Фанты</a>
+  </header>
+
+  <!-- Контейнер для GIF -->
+  <div class="fant-gif-container">
+    <img src="/static/uploads/{{ fantasy.gif_filename }}" alt="Fantasy GIF" class="fant-gif">
+  </div>
+
+  <!-- Карточка с заданием из БД -->
+  <section class="fant-card">
+    <p class="fant-text">{{ fantasy.description }}</p>
+  </section>
+
+  <footer class="actions">
+    <a href="/random" class="btn btn-primary">Следующий случайный</a>
+    <a href="/" class="btn btn-secondary">К списку всех</a>
+    <a href="/create" class="btn btn-secondary" style="background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted);">Добавить свой</a>
+  </footer>
+</main>
+
+</body>
+</html>

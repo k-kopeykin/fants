@@ -1,28 +1,42 @@
-{% extends "base.html" %}
-{% block content %}
-<h2 class="mb-4">Все фанты</h2>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Все фанты</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
 
-{% if empty_message %}
-    <div class="alert alert-info">{{ empty_message }}</div>
-{% endif %}
+<main class="screen">
+  <header class="header">
+    <h1 class="logo">Фанты</h1>
+  </header>
 
-{% if fantasies %}
-    <div class="row row-cols-1 row-cols-md-2 g-4">
-        {% for fantasy in fantasies %}
-        <div class="col">
-            <div class="card h-100">
-                <img src="/static/uploads/{{ fantasy.gif_filename }}" class="card-img-top" alt="GIF" style="max-height: 300px; object-fit: cover;">
-                <div class="card-body">
-                    <p class="card-text">{{ fantasy.description }}</p>
-                    <a href="/fantasy/{{ fantasy.id }}" class="btn btn-primary btn-sm w-100">Открыть</a>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
+  {% if fantasies %}
+    <div class="fantasy-list">
+      {% for fantasy in fantasies %}
+      <a href="/fantasy/{{ fantasy.id }}" class="list-item">
+        <img src="/static/uploads/{{ fantasy.gif_filename }}" alt="GIF">
+        <span class="list-item-text">{{ fantasy.description }}</span>
+      </a>
+      {% endfor %}
     </div>
-{% else %}
-    {% if not empty_message %}
-        <p class="text-muted">Список пуст. <a href="/create">Создай первый фант!</a></p>
-    {% endif %}
-{% endif %}
-{% endblock %}
+  {% else %}
+    <div class="fant-card">
+      <p class="fant-text" style="font-size: 18px; color: var(--text-muted);">
+        Пока нет ни одного фанта.<br>Давай создадим первый!
+      </p>
+    </div>
+  {% endif %}
+
+  <footer class="actions">
+    <a href="/create" class="btn btn-primary">Создать новый фант</a>
+    <a href="/random" class="btn btn-secondary">Мне повезёт (Случайный)</a>
+  </footer>
+</main>
+
+</body>
+</html>

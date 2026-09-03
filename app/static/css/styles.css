@@ -1,0 +1,201 @@
+/* ---------- Дизайн-токены ---------- */
+:root {
+  --bg: #0d0a14;
+  --surface: #17121f;
+  --surface-2: #241d33;
+  --violet: #8b5cf6;
+  --violet-dark: #6d28d9;
+  --pink: #ec4899;
+  --pink-light: #f472b6;
+  --temp-warm: #f59e0b;
+  --temp-hot: #ec4899;
+  --temp-fire: #ef4444;
+  --text: #f5f3ff;
+  --text-dim: #a78bfa;
+  --text-muted: #7c6f9f;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--text);
+  background: radial-gradient(900px 480px at 50% -10%, rgba(109, 40, 217, .25), transparent 70%), var(--bg);
+  display: flex;
+  justify-content: center;
+}
+
+/* Мобильный контейнер */
+.screen {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  padding: 24px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---------- Шапка ---------- */
+.header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.logo {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  background: linear-gradient(90deg, var(--pink-light), var(--violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(236, 72, 153, .45));
+  text-decoration: none;
+}
+
+/* ---------- Карточка фанта и GIF ---------- */
+.fant-gif-container {
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--surface-2);
+  background: var(--surface);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.fant-gif {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.fant-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--surface-2);
+  border-radius: 24px;
+  padding: 32px 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  min-height: 150px;
+}
+
+.fant-text {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+/* ---------- Кнопки действий ---------- */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto; /* Прижимает кнопки к низу */
+}
+
+.btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ---------- Формы ---------- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input,
+.form-file {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus,
+.form-file:focus {
+  outline: none;
+  border-color: var(--violet);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-file {
+  padding: 12px;
+  cursor: pointer;
+}
+
+.form-file::file-selector-button {
+  background: var(--violet);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-weight: 700;
+  margin-right: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.form-file::file-selector-button:hover {
+  background: var(--violet-dark);
+}
+
+/* ---------- Пустое состояние ---------- */
+.empty-state {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.empty-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.empty-text {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
