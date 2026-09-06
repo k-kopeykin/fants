@@ -3,44 +3,152 @@
 {% block title %}Новый фант — Фанты{% endblock %}
 
 {% block content %}
-
-<section class="fant-card" style="display: block; padding: 28px 24px;">
-  <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 24px; text-align: center; color: var(--text);">
+<section class="fant-card" style="display: block; padding: 24px 20px;">
+  <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 20px; text-align: center;">
     Новый фант
   </h2>
 
-  <form action="/create" method="post" enctype="multipart/form-data">
-
+  <form action="/create" method="post" enctype="multipart/form-data" id="createForm">
+    
     <div class="form-group">
-      <label for="description" class="form-label">Задание</label>
-      <input
-        type="text"
-        id="description"
-        name="description"
-        class="form-input"
-        placeholder="Например: Станцуй ламбаду"
-        required
-        maxlength="200"
-      >
+      <label class="form-label">Задание</label>
+      <input type="text" name="description" class="form-input" placeholder="Например: Станцуй ламбаду" required maxlength="200">
     </div>
 
     <div class="form-group">
-      <label for="gif" class="form-label">GIF-анимация</label>
-      <input
-        type="file"
-        id="gif"
-        name="gif"
-        class="form-file"
-        accept="image/gif"
-        required
-      >
+      <label class="form-label">Категория</label>
+      <div class="selector-group">
+        <label class="selector-option">
+          <input type="radio" name="category" value="flirt">
+          <span>Флирт</span>
+        </label>
+        <label class="selector-option selected">
+          <input type="radio" name="category" value="prelude" checked>
+          <span>Прелюдия</span>
+        </label>
+        <label class="selector-option">
+          <input type="radio" name="category" value="intimacy">
+          <span>Близость</span>
+        </label>
+      </div>
     </div>
 
-    <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
+    <div class="form-group">
+      <label class="form-label">Температура</label>
+      <div class="selector-group">
+        <label class="selector-option warm selected">
+          <input type="radio" name="temperature" value="warm" checked>
+          <span>Тепло</span>
+        </label>
+        <label class="selector-option hot">
+          <input type="radio" name="temperature" value="hot">
+          <span>Горячо</span>
+        </label>
+        <label class="selector-option fire">
+          <input type="radio" name="temperature" value="fire">
+          <span>Огонь</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Кто выполняет</label>
+      <div class="selector-group">
+        <label class="selector-option">
+          <input type="radio" name="target_gender" value="m">
+          <span>М</span>
+        </label>
+        <label class="selector-option">
+          <input type="radio" name="target_gender" value="f">
+          <span>Ж</span>
+        </label>
+        <label class="selector-option selected">
+          <input type="radio" name="target_gender" value="both" checked>
+          <span>Оба</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Таймер</label>
+      <div class="selector-group">
+        <label class="selector-option selected" id="timerNoLabel">
+          <input type="radio" name="timer_enabled" value="no" checked>
+          <span>Нет</span>
+        </label>
+        <label class="selector-option" id="timerYesLabel">
+          <input type="radio" name="timer_enabled" value="yes">
+          <span>Да</span>
+        </label>
+      </div>
+      <div id="timerInputWrapper" style="display: none; margin-top: 12px;">
+        <input type="number" name="timer_seconds" class="form-input" value="60" min="30" max="180" step="30" style="text-align: center; font-size: 18px; font-weight: 700;">
+        <p class="form-hint">От 30 до 180 секунд, шаг 30</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Файл (необязательно)</label>
+      <input type="file" name="media" class="form-file" accept="image/gif,image/png,image/jpeg,video/mp4" id="mediaInput">
+      <p class="form-hint">GIF, PNG, JPEG (до 10MB) или MP4 (до 5MB). Если не выбрать — будет текстовый фант.</p>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="margin-top: 12px;">
       Создать фант
     </button>
-
   </form>
 </section>
 
+<script>
+// Переключение селекторов
+document.querySelectorAll('.selector-option').forEach(option => {
+  option.addEventListener('click', function(e) {
+    const input = this.querySelector('input');
+    const groupName = input.name;
+    
+    // Снимаем выделение со всех в группе
+    document.querySelectorAll(`input[name="${groupName}"]`).forEach(radio => {
+      radio.parentElement.classList.remove('selected');
+    });
+    
+    // Выделяем текущий
+    this.classList.add('selected');
+    input.checked = true;
+    
+    // Специальная логика для таймера
+    if (groupName === 'timer_enabled') {
+      const wrapper = document.getElementById('timerInputWrapper');
+      if (input.value === 'yes') {
+        wrapper.style.display = 'block';
+      } else {
+        wrapper.style.display = 'none';
+      }
+    }
+  });
+});
+
+// Валидация перед отправкой
+document.getElementById('createForm').addEventListener('submit', function(e) {
+  const fileInput = document.getElementById('mediaInput');
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    const ext = file.name.split('.').pop().toLowerCase();
+    const allowed = ['gif', 'png', 'jpg', 'jpeg', 'mp4'];
+    
+    if (!allowed.includes(ext)) {
+      e.preventDefault();
+      alert('Недопустимый формат файла. Разрешены: GIF, PNG, JPEG, MP4');
+      return false;
+    }
+    
+    const maxSize = ext === 'mp4' ? 5 * 1024 * 1024 : 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      e.preventDefault();
+      const mb = maxSize / 1024 / 1024;
+      alert(`Файл слишком большой. Максимум ${mb}MB`);
+      return false;
+    }
+  }
+});
+</script>
 {% endblock %}
