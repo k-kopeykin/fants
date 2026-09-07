@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Нет фантов{% endblock %}
+
+{% block content %}
+<main class="screen">
+  <header class="game-header">
+    <form action="/game/{{ session.id }}/stop" method="post" style="margin: 0;">
+  <button type="submit" class="btn-stop" onclick="return confirm('Завершить игру?')">
+    Завершить игру
+  </button>
+</form>
+  </header>
+
+  <div class="fant-card" style="padding: 32px 24px; text-align: center;">
+    <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 16px;">
+      Подходящих фантов не найдено
+    </h2>
+    <p style="color: var(--text-muted); margin-bottom: 24px;">
+      Попробуй повысить уровень или температуру, либо добавь новые фанты в базу.
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <form action="/game/{{ session.id }}/level-up" method="post">
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Перейти на уровень выше
+        </button>
+      </form>
+      
+      <form action="/game/{{ session.id }}/temp-up" method="post">
+        <button type="submit" class="btn btn-secondary" style="width: 100%;">
+          Повысить температуру
+        </button>
+      </form>
+
+      <a href="/create" class="btn btn-secondary" style="width: 100%; text-align: center; display: block; padding: 16px;">
+        Добавить фант
+      </a>
+    </div>
+  </div>
+</main>
+{% endblock %}

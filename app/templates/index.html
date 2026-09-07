@@ -1,42 +1,154 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Все фанты</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/styles.css">
-</head>
-<body>
+{% extends "base.html" %}
 
+{% block title %}Фанты{% endblock %}
+
+{% block content %}
 <main class="screen">
-  <header class="header">
-    <h1 class="logo">Фанты</h1>
-  </header>
+  
+  <!-- Слайдер "Уровень смелости" -->
+  <section class="slider-card">
+    <div class="slider-label">Уровень смелости</div>
+    <input type="range" id="slider" min="0" max="100" value="50" step="1">
+    <div class="slider-value" id="sliderValue">Лёгкое</div>
+  </section>
 
-  {% if fantasies %}
-    <div class="fantasy-list">
-      {% for fantasy in fantasies %}
-      <a href="/fantasy/{{ fantasy.id }}" class="list-item">
-        <img src="/static/uploads/{{ fantasy.gif_filename }}" alt="GIF">
-        <span class="list-item-text">{{ fantasy.description }}</span>
-      </a>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="fant-card">
-      <p class="fant-text" style="font-size: 18px; color: var(--text-muted);">
-        Пока нет ни одного фанта.<br>Давай создадим первый!
-      </p>
-    </div>
-  {% endif %}
+  <button onclick="startGame()" class="btn btn-primary">
+    Начать игру
+  </button>
 
-  <footer class="actions">
-    <a href="/create" class="btn btn-primary">Создать новый фант</a>
-    <a href="/random" class="btn btn-secondary">Мне повезёт (Случайный)</a>
-  </footer>
+  <a href="/create" class="btn btn-secondary">
+    Добавить фант
+  </a>
 </main>
 
-</body>
-</html>
+<script>
+const slider = document.getElementById('slider');
+const valueDisplay = document.getElementById('sliderValue');
+
+const levels = [
+  { max: 20, text: 'Классика', boldness: 25 },
+  { max: 45, text: 'Лёгкое', boldness: 50 },
+  { max: 70, text: 'Смелее', boldness: 75 },
+  { max: 100, text: 'Эксперименты', boldness: 100 }
+];
+
+function getLevel(value) {
+  for (let level of levels) {
+    if (value <= level.max) return level;
+  }
+  return levels[levels.length - 1];
+}
+
+slider.addEventListener('input', (e) => {
+  const level = getLevel(parseInt(e.target.value));
+  valueDisplay.textContent = level.text;
+});
+
+function startGame() {
+  const level = getLevel(parseInt(slider.value));
+  window.location.href = '/game/start?slider=' + level.boldness;
+}
+</script>
+
+<style>
+.slider-card {
+  background: var(--surface);
+  padding: 28px 24px;
+  border-radius: 20px;
+  border: 1px solid var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.slider-label {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+#slider {
+  width: 100%;
+  height: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--surface-2);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+#slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--violet);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+  transition: transform 0.15s;
+}
+
+#slider::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+}
+
+#slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--violet);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+}
+
+.slider-value {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--violet);
+  min-height: 24px;
+  transition: all 0.2s;
+}
+
+.btn-primary, .btn-secondary {
+  display: block;
+  width: 100%;
+  padding: 18px;
+  border-radius: 16px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  background: var(--violet);
+  color: white;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--surface-2);
+}
+
+.btn-secondary:active {
+  background: var(--surface-2);
+  transform: scale(0.98);
+}
+</style>
+{% endblock %}

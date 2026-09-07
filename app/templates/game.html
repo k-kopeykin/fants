@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}Игра{% endblock %}
+
+{% block content %}
+<main class="screen game-screen">
+  
+  <!-- Кнопка Стоп на всю ширину -->
+  <form action="/game/{{ session.id }}/stop" method="post" class="stop-form">
+  <button type="submit" class="btn-stop-full" onclick="return confirm('Завершить игру?')">
+    Стоп игра
+  </button>
+</form>
+
+  <!-- Индикаторы: уровень + температура -->
+  <div class="game-indicators">
+    <form action="/game/{{ session.id }}/level-up" method="post" class="level-indicator">
+      <button type="submit" class="level-btn" title="Нажми для перехода на следующий уровень">
+        {% if session.current_level == 'flirt' %}Флирт
+        {% elif session.current_level == 'prelude' %}Прелюдия
+        {% else %}Близость{% endif %}
+        <span class="level-hint">↑</span>
+      </button>
+    </form>
+    
+    <div class="temp-indicator">
+      {% set temp_count = {'warm': 1, 'hot': 2, 'fire': 3}[session.current_temperature] %}
+      <form action="/game/{{ session.id }}/set-temp/warm" method="post" style="display:inline;">
+        <button type="submit" class="flame-btn {% if temp_count >= 1 %}active{% endif %}" title="Тепло">
+          <span class="flame-icon">🔥</span>
+        </button>
+      </form>
+      <form action="/game/{{ session.id }}/set-temp/hot" method="post" style="display:inline;">
+        <button type="submit" class="flame-btn {% if temp_count >= 2 %}active{% endif %}" title="Горячо">
+          <span class="flame-icon">🔥</span>
+        </button>
+      </form>
+      <form action="/game/{{ session.id }}/set-temp/fire" method="post" style="display:inline;">
+        <button type="submit" class="flame-btn {% if temp_count >= 3 %}active{% endif %}" title="Огонь">
+          <span class="flame-icon">🔥</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Ход + медиа + текст в одном блоке -->
+  <div class="fant-content">
+    <div class="turn-label">
+      {% if session.current_turn == 'm' %}Задание для парня
+      {% else %}Задание для девушки{% endif %}
+    </div>
+
+    {% if fantasy.media_type == 'video' and fantasy.media_filename %}
+    <div class="fant-media">
+      <video src="/static/uploads/{{ fantasy.media_filename }}" autoplay loop muted playsinline></video>
+    </div>
+    {% elif fantasy.media_type == 'image' and fantasy.media_filename %}
+    <div class="fant-media">
+      <img src="/static/uploads/{{ fantasy.media_filename }}" alt="">
+    </div>
+    {% endif %}
+
+    <p class="task-text">{{ fantasy.description }}</p>
+  </div>
+
+  <!-- Таймер -->
+  {% if fantasy.timer_seconds and fantasy.timer_seconds > 0 %}
+  <div class="timer-block" id="timerBlock" onclick="startTimer()">
+    <div class="timer-display" id="timerDisplay">{{ fantasy.timer_seconds }}</div>
+    <div class="timer-hint">нажми, чтобы запустить</div>
+  </div>
+  {% endif %}
+
+  <!-- Кнопки действий -->
+  <div class="game-actions">
+    <form action="/game/{{ session.id }}/skip" method="post" class="action-form">
+      <button type="submit" class="btn-skip">Другой</button>
+    </form>
+    
+    <form action="/game/{{ session.id }}/done" method="post" class="action-form main-action">
+      <input type="hidden" name="fantasy_id" value="{{ fantasy.id }}">
+      <button type="submit" class="btn-done">Выполнено ✓</button>
+    </form>
+  </div>
+
+</main>
+
+<script>
+let timerInterval = null;
+let timeLeft = {{ fantasy.timer_seconds or 0 }};
+
+function startTimer() {
+  if (timerInterval) return;
+  
+  const display = document.getElementById('timerDisplay');
+  const hint = document.querySelector('.timer-hint');
+  const block = document.getElementById('timerBlock');
+  
+  if (hint) hint.style.display = 'none';
+  block.classList.add('running');
+  
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    display.textContent = timeLeft;
+    
+    if (timeLeft <= 10) block.classList.add('urgent');
+    
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      display.textContent = '0';
+      block.classList.add('finished');
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    }
+  }, 1000);
+}
+</script>
+
+<style>
+.game-screen {
+  padding: 12px;
+  gap: 12px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Стоп на всю ширину */
+.btn-stop-full {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: var(--surface);
+  color: var(--text-muted);
+  border-radius: 12px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--surface-2);
+  box-sizing: border-box;
+}
+
+/* Индикаторы */
+.game-indicators {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--surface-2);
+}
+
+.level-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.level-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  opacity: 0.7;
+}
+
+.temp-indicator {
+  display: flex;
+  gap: 6px;
+}
+
+.flame-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.flame-btn:active {
+  transform: scale(1.2);
+}
+
+.flame-icon {
+  font-size: 22px;
+  opacity: 0.2;
+  filter: grayscale(100%);
+  transition: all 0.3s;
+  display: block;
+}
+
+.flame-btn.active .flame-icon {
+  opacity: 1;
+  filter: grayscale(0%);
+}
+
+/* Контент: ход + медиа + текст */
+.fant-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 14px;
+  border: 1px solid var(--surface-2);
+  overflow: hidden;
+}
+
+.turn-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.fant-media {
+  width: 100%;
+  max-height: 35vh;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-2);
+  flex-shrink: 1;
+}
+
+.fant-media img, .fant-media video {
+  width: 100%;
+  height: 100%;
+  max-height: 35vh;
+  object-fit: contain;
+  display: block;
+}
+
+.task-text {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* Таймер */
+.timer-block {
+  background: var(--surface);
+  padding: 16px;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid var(--surface-2);
+  flex-shrink: 0;
+}
+
+.timer-block.running {
+  border-color: var(--violet);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.timer-block.urgent {
+  border-color: var(--temp-fire);
+  animation: pulse 0.5s infinite;
+}
+
+.timer-block.finished {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.timer-display {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Кнопки действий */
+.game-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.action-form {
+  flex: 1;
+}
+
+.action-form button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-skip {
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+
+.btn-done {
+  background: var(--violet);
+  color: white;
+}
+
+.main-action {
+  flex: 1.5;
+}
+
+.stop-form {
+  margin: 0;
+  padding: 0;
+}
+
+.stop-form .btn-stop-full {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: var(--surface);
+  color: var(--text-muted);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--surface-2);
+  box-sizing: border-box;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.stop-form .btn-stop-full:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+</style>
+{% endblock %}
