@@ -152,7 +152,7 @@ def game_screen(request: Request, session_id: int, db: Session = Depends(get_db)
     })
 
 @app.post("/game/{session_id}/done")
-def mark_done(request: Request, session_id: int, fantasy_id: int, db: Session = Depends(get_db)):
+def mark_done(request: Request, session_id: int, fantasy_id: int = Form(...), db: Session = Depends(get_db)):
     """Фант выполнен — переключаем ход и показываем следующий"""
     session = db.query(crud.GameSession).filter_by(id=session_id, is_active=1).first()
     if not session:

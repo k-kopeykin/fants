@@ -89,12 +89,7 @@ def pick_next_fantasy(db: Session, session: GameSession) -> Fantasy:
             Fantasy.boldness <= session.slider_value
         ).order_by(func.random()).first()
     
-    # Если всё ещё нет — берём любой подходящий по полу
-    if not fantasy:
-        fantasy = db.query(Fantasy).filter(
-            Fantasy.target_gender.in_([session.current_turn, "both"]),
-            Fantasy.boldness <= session.slider_value
-        ).order_by(func.random()).first()
+    
     
     return fantasy
 

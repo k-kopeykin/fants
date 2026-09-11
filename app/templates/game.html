@@ -65,7 +65,7 @@
 
   <!-- Таймер -->
   {% if fantasy.timer_seconds and fantasy.timer_seconds > 0 %}
-  <div class="timer-block" id="timerBlock" onclick="startTimer()">
+  <div class="timer-block" id="timerBlock" onclick="startTimer()" data-seconds="{{ fantasy.timer_seconds or 0 }}">
     <div class="timer-display" id="timerDisplay">{{ fantasy.timer_seconds }}</div>
     <div class="timer-hint">нажми, чтобы запустить</div>
   </div>
@@ -87,7 +87,10 @@
 
 <script>
 let timerInterval = null;
-let timeLeft = {{ fantasy.timer_seconds or 0 }};
+
+// Читаем значение из data-атрибута. Если его нет, ставим 0
+const timerBlock = document.getElementById('timerBlock');
+let timeLeft = timerBlock ? parseInt(timerBlock.dataset.seconds) || 0 : 0;
 
 function startTimer() {
   if (timerInterval) return;
