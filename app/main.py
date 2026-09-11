@@ -167,13 +167,7 @@ def skip_fantasy(request: Request, session_id: int, db: Session = Depends(get_db
     session = db.query(crud.GameSession).filter_by(id=session_id, is_active=1).first()
     if not session:
         return RedirectResponse(url="/", status_code=303)
-    # Просто перегенерим — добавим ID в показанные, чтобы не повторялся
-    current = crud.pick_next_fantasy(db, session)
-    if current:
-        shown = json.loads(session.fantasies_shown or "[]")
-        shown.append(current.id)
-        session.fantasies_shown = json.dumps(shown)
-        db.commit()
+    
     return RedirectResponse(url=f"/game/{session_id}", status_code=303)
 
 @app.post("/game/{session_id}/level-up")

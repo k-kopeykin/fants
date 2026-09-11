@@ -52,18 +52,6 @@ def get_next_level(current: str) -> str:
     idx = LEVELS_ORDER.index(current)
     return LEVELS_ORDER[min(idx + 1, len(LEVELS_ORDER) - 1)]
 
-def create_session(db: Session, slider_value: int = 50) -> GameSession:
-    session = GameSession(
-        current_level="flirt",
-        current_temperature="warm",
-        current_turn="m",
-        slider_value=slider_value,
-        fantasies_shown="[]"
-    )
-    db.add(session)
-    db.commit()
-    db.refresh(session)
-    return session
 
 def get_active_session(db: Session) -> GameSession:
     return db.query(GameSession).filter_by(is_active=1).order_by(desc(GameSession.started_at)).first()
@@ -142,3 +130,6 @@ def set_temperature(db: Session, session: GameSession, temperature: str) -> bool
         db.commit()
         return True
     return False
+
+def get_random_fantasy(db: Session):
+    return db.query(Fantasy).order_by(func.random()).first()

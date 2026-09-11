@@ -93,10 +93,43 @@
       <p class="form-hint">GIF, PNG, JPEG (до 10MB) или MP4 (до 5MB). Если не выбрать — будет текстовый фант.</p>
     </div>
 
+        <div class="form-group">
+      <label class="form-label">Уровень смелости</label>
+      <input type="range" id="boldnessSlider" min="0" max="100" value="50" step="1">
+      <div class="slider-value" id="boldnessValue">Лёгкое</div>
+      <input type="hidden" name="boldness" id="boldnessInput" value="50">
+    </div>
+
     <button type="submit" class="btn btn-primary" style="margin-top: 12px;">
       Создать фант
     </button>
   </form>
+  <script>
+// Логика ползунка смелости при создании
+const boldnessSlider = document.getElementById('boldnessSlider');
+const boldnessValue = document.getElementById('boldnessValue');
+const boldnessInput = document.getElementById('boldnessInput');
+
+const levels = [
+  { max: 20, text: 'Классика', boldness: 25 },
+  { max: 45, text: 'Лёгкое', boldness: 50 },
+  { max: 70, text: 'Смелее', boldness: 75 },
+  { max: 100, text: 'Эксперименты', boldness: 100 }
+];
+
+function getLevel(value) {
+  for (let level of levels) {
+    if (value <= level.max) return level;
+  }
+  return levels[levels.length - 1];
+}
+
+boldnessSlider.addEventListener('input', (e) => {
+  const level = getLevel(parseInt(e.target.value));
+  boldnessValue.textContent = level.text;
+  boldnessInput.value = level.boldness;
+});
+</script>
 </section>
 
 <script>
